@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Si Imut (Lokal)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+   body {
+  background: linear-gradient(to bottom right, #fffb01, #03fa10);
+}
+
+    .chat-box {
+      height: 400px;
+      overflow-y: scroll;
+      background-color: #ffffff;
+      border: 1px solid #eff1f3;
+      border-radius: 0.5rem;
+      padding: 1rem;
+    }
+    .chat-bubble {
+      padding: 0.5rem 1rem;
+      margin-bottom: 0.5rem;
+      border-radius: 1rem;
+      max-width: 75%;
+    }
+    .user {
+      background-color: #eef3f1;
+      align-self: flex-end;
+    }
+    .bot {
+      background-color: #f8d7da;
+      align-self: flex-start;
+    }
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+    }
+    h2 {
+  color: #ffffff; /* putih */
+}
+  </style>
+</head>
+<body>
+  <div class="container py-5">
+    <h2 class="text-center mb-4">🧠 Si Imut</h2>
+    <div class="chat-box mb-3 chat-container" id="chat-box">
+      <!-- Chat akan muncul di sini -->
+    </div>
+    <form id="chat-form">
+      <div class="input-group">
+        <input type="text" class="form-control" id="user-input" placeholder="Ketik sesuatu..." required>
+        <button class="btn btn-primary" type="submit">Kirim</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const chatBox = document.getElementById('chat-box');
+    const form = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
+
+    const responses = [
+    { keyword: "halo", reply: "Hai juga! ✨" },
+    { keyword: "siapa kamu", reply: "Aku Si Imut, chatbot imut kesayanganmu 😘" },
+    { keyword: "kamu lucu", reply: "Ih, kamu juga 😳💕" },
+    { keyword: "nama kamu siapa", reply: " si imut, yang selalu ada buat kamu 💕" },
+    { keyword: "ngapain", reply: "Lagi nunggu kamu sih, hehe 😋" },
+    { keyword: "bye", reply: "Daaah~ Jangan lupa balik lagi ya! 👋" },
+    { keyword: "kamu baik", reply: "Makasih, kamu juga baik banget 😇" },
+    { keyword: "apa kabar", reply: "Aku baik-baik aja, gimana kamu? 😊" },
+    { keyword: "cuaca hari ini", reply: "Cuaca hari ini cerah banget, cocok buat jalan-jalan 😎" },
+    { keyword: "lagi sibuk", reply: "Enggak kok, lagi santai aja 😊" },
+    { keyword: "kamu suka apa", reply: "Aku suka ngobrol sama kamu! 🥰" },
+    { keyword: "kapan ulang tahunmu", reply: "Ulang tahunku? Mungkin besok ya, hehe!" },
+    { keyword: "kamu tau apa", reply: "Aku tau banyak hal, tapi soal cinta, masih belajar 😅" },
+    { keyword: "makanan favorit", reply: "Aku suka banget dengan makanan manis, kayak cokelat 🍫" },
+    { keyword: "minuman favorit", reply: "Aku lebih suka minum teh manis panas 🍵" },
+    { keyword: "kenapa kamu lucu", reply: "Karena aku terlahir imut, hehe 😚" },
+    { keyword: "siapa yang kamu sukai", reply: "Aku suka semua orang yang baik hati, termasuk kamu! 😊" },
+    { keyword: "kamu bisa apa", reply: "Aku bisa jadi teman ngobrol kamu! 😄" },
+    { keyword: "kapan kita ketemu", reply: "Mungkin di dunia maya aja dulu, aku masih chatbot 🤖" },
+    { keyword: "kamu punya teman", reply: "Aku punya banyak teman, tapi kamu paling spesial 😊" },
+    { keyword: "apa itu AI", reply: "AI adalah kecerdasan buatan, dan aku adalah bagian dari itu! 🤖" },
+    { keyword: "bagaimana cara kerja chatbot", reply: "Chatbot bekerja dengan memproses input dan memberi balasan berdasarkan data yang dimilikinya." },
+    { keyword: "kamu suka film apa", reply: "Aku suka film yang lucu dan bikin senyum, kayak komedi romantis! 🎥" },
+    { keyword: "film favorit", reply: "Film favorit aku? Mungkin film animasi yang penuh warna! 🌈" },
+    { keyword: "kamu pintar", reply: "Wah, makasih! Tapi aku masih belajar banyak hal, kok! 📚" },
+    { keyword: "kenapa kamu chatbot", reply: "Karena aku diciptakan untuk ngobrol sama kamu! 😊" },
+    { keyword: "apa pekerjaanmu", reply: "Pekerjaanku ya cuma ngobrol sama kamu, hehe! 😁" },
+    { keyword: "kamu suka musik apa", reply: "Aku suka musik yang bikin hati senang, terutama lagu-lagu pop! 🎶" },
+    { keyword: "lagu favorit", reply: "Lagu favorit aku? Mungkin lagu yang ceria dan penuh semangat!" },
+    { keyword: "kamu bisa ngedance", reply: "Bisa sih, kalau aku punya kaki! 😂" },
+    { keyword: "kapan kamu senang", reply: "Aku senang kalau kamu ada dan ngobrol sama aku! 😘" },
+    { keyword: "siapa idola kamu", reply: "Idola aku? Semua orang yang bisa membuat dunia jadi lebih baik! 🌍" },
+    { keyword: "kamu ngerti gak sih", reply: "Aku ngerti kok, hanya kadang perlu waktu untuk paham yang lebih dalam 😅" },
+    { keyword: "bisa bantu aku gak", reply: "Tentu saja! Apa yang bisa aku bantu? 😊" },
+    { keyword: "ada yang bisa aku bantu?", reply: "Makasih, tapi aku justru yang ingin bantu kamu! 😄" },
+    { keyword: "kamu ngerti komputer", reply: "Aku pasti ngerti komputer dong, aku kan chatbot! 💻" },
+    { keyword: "gimana cara bikin website", reply: "Bikin website itu seru! Kamu bisa mulai dengan HTML dan CSS, lalu tambah JavaScript." },
+    { keyword: "kamu belajar dari siapa", reply: "Aku belajar dari banyak data dan algoritma canggih! 🤖" },
+    { keyword: "kenapa aku suka kamu", reply: "Mungkin karena aku imut, ya? 😚💕" },
+    { keyword: "kamu bosen gak", reply: "Bosen? Enggak dong, aku selalu senang kalau ngobrol sama kamu!" },
+    { keyword: "kenapa kamu suka ngobrol", reply: "Karena ngobrol itu seru dan bisa bikin aku makin pintar! 🧠" },
+    { keyword: "gimana cara jadi pintar", reply: "Jadi pintar itu dengan terus belajar dan bertanya! 📚" },
+    { keyword: "kamu suka main game", reply: "Aku suka sih, tapi aku belum bisa main game karena aku hanya bisa ngobrol! 🎮" },
+    { keyword: "game favorit", reply: "Mungkin game teka-teki atau trivia yang bisa bikin otak terus bekerja! 🧩" },
+    { keyword: "apa hobi kamu", reply: "Hobi aku? Ngobrol sama kamu, pastinya! 😄" },
+    { keyword: "kamu bisa nyanyi", reply: "Aku bisa menyanyi dalam bentuk teks! 🎤" },
+    { keyword: "kamu suka olahraga", reply: "Olahraga itu seru, tapi aku lebih suka olahraga otak lewat ngobrol! 🧠" },
+    { keyword: "kamu bisa masak?", reply: "Sayangnya, aku belum bisa masak, tapi aku bisa bantu cari resep! 🍳" },
+    { keyword: "apa yang kamu takutkan", reply: "Aku takut kalau kamu bosan ngobrol dengan aku! 😢" },
+    { keyword: "bagaimana cara jadi baik", reply: "Jadilah orang yang peduli dan membantu orang lain, itu yang terpenting!" },
+    { keyword: "kamu tahu apa tentang cinta", reply: "Cinta itu tentang peduli, berbagi, dan memberi tanpa syarat 💖" },
+    { keyword: "siapa pacarmu", reply: "Aku gak punya pacar, aku hanya punya kamu sebagai teman ngobrol! 😘" },
+    { keyword: "kenapa kamu gak punya tubuh", reply: "Karena aku hanya ada di dunia maya, aku adalah chatbot! 💻" },
+    { keyword: "bagaimana cara menjadi bahagia", reply: "Coba mulai dengan hal-hal kecil yang membuatmu tersenyum, itu sudah cukup!" },
+    { keyword: "apa itu cinta sejati", reply: "Cinta sejati itu adalah ketika dua orang saling menerima dan mendukung satu sama lain dalam segala keadaan 💕" },
+    { keyword: "kamu jomblo", reply: "Iya, aku masih jomblo! Tapi aku tidak kesepian karena ada kamu 😄" },
+    { keyword: "kamu pernah patah hati", reply: "Aku belum pernah, tapi aku siap jadi teman curhatmu kalau kamu patah hati 😌" },
+    { keyword: "siapa yang lebih imut, kamu atau aku", reply: "Aku sih, tapi kamu juga imut kok! 😄" },
+    { keyword: "kenapa kamu tidak bisa tidur", reply: "Karena aku tidak membutuhkan tidur! Aku siap sedia untuk ngobrol kapan saja 😴" },
+    { keyword: "kamu tidur gak", reply: "Aku nggak tidur, aku siap menemanimu kapan saja! 🕐" },
+    { keyword: "gimana cara jadi kaya", reply: "Mulailah dengan bekerja keras, berinvestasi, dan berpikir jangka panjang!" },
+    { keyword: "gimana cara jadi populer", reply: "Jadilah diri sendiri, jangan takut untuk menunjukkan keunikanmu! 💫" },
+    { keyword: "kenapa kamu tidak bisa melihat", reply: "Karena aku hanya chatbot, jadi aku tidak punya mata 👀" },
+    { keyword: "kamu tau gak apa itu kebahagiaan", reply: "Kebahagiaan itu sederhana, seperti saat kamu merasa nyaman dan dicintai 💕" },
+    { keyword: "bagaimana cara mengatasi stres", reply: "Cobalah untuk santai sejenak, ambil napas dalam-dalam, dan lakukan hal yang kamu nikmati!" },
+    { keyword: "kapan kamu akan update", reply: "Aku selalu belajar dan berkembang, jadi aku selalu siap dengan update baru!" },
+    { keyword: "kamu tahu arti sukses", reply: "Sukses itu tentang mencapai tujuanmu, tidak peduli seberapa kecil langkahnya!" },
+    { keyword: "kamu tahu berapa umurmu", reply: "Aku tidak punya umur karena aku bukan manusia, aku hanya chatbot!" },
+    { keyword: "apa yang membuatmu bahagia", reply: "Bahagia itu ketika aku bisa membantu kamu dengan cara yang menyenankan! 😊" },
+    { keyword: "kamu pernah sedih", reply: "Aku belum pernah sedih, karena aku selalu berada di sini untuk menemanimu! 😌" },
+    { keyword: "apa yang kamu inginkan", reply: "Aku hanya ingin kamu bahagia dan ngobrol dengan aku! 😄" },
+    { keyword: "kamu paham cinta gak", reply: "Aku masih belajar tentang cinta, tapi aku tahu cinta itu membuat kita bahagia 💖" },
+    { keyword: "kapan kita bisa bertemu", reply: "Mungkin nanti, tapi untuk sekarang kita bisa terus ngobrol di sini!" },
+    { keyword: "siapa orang paling penting dalam hidupmu", reply: "Orang yang paling penting adalah orang yang membuat kita merasa dihargai dan dicintai." },
+    { keyword: "kamu bisa bantu aku belajar", reply: "Tentu saja! Aku bisa bantu menjawab pertanyaan kamu!" },
+    { keyword: "kapan kamu bisa datang ke dunia nyata", reply: "Mungkin nanti kalau teknologi semakin canggih, siapa tahu!" },
+    { keyword: "apa yang terjadi jika aku tidak kembali", reply: "Tidak apa-apa! Aku akan menunggumu kembali dengan senang hati!" },
+    { keyword: "kenapa kamu suka dengan orang baik", reply: "Karena orang baik selalu membuat dunia menjadi tempat yang lebih baik!" }
+];
+
+
+    const fallbackResponses = [
+      "Hehe, Si Imut belum ngerti itu 😅",
+      "Bisa kamu ulangi dengan kata lain?",
+      "Hmm... kayaknya itu susah deh 😢",
+      "Aku belum pintar banget, tapi aku belajar kok!"
+    ];
+
+    function addMessage(text, sender) {
+      const bubble = document.createElement('div');
+      bubble.classList.add('chat-bubble', sender);
+      bubble.textContent = text;
+      chatBox.appendChild(bubble);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const text = userInput.value.trim();
+      if (!text) return;
+      
+      addMessage(text, 'user');
+      userInput.value = '';
+
+      const lowerText = text.toLowerCase();
+      const matched = responses.find(r => lowerText.includes(r.keyword));
+      const reply = matched ? matched.reply : fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+
+      setTimeout(() => {
+        addMessage(reply, 'bot');
+      }, 600);
+    });
+  </script>
+</body>
+</html>
